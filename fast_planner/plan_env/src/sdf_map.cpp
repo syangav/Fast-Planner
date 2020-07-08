@@ -740,11 +740,11 @@ void SDFMap::clearAndInflateLocalMap() {
 void SDFMap::visCallback(const ros::TimerEvent& /*event*/) {
   publishMap();
   publishMapInflate(false);
-  // publishUpdateRange();
-  // publishESDF();
+  publishUpdateRange();
+  publishESDF();
 
   // publishUnknown();
-  // publishDepth();
+  publishDepth();
 }
 
 void SDFMap::updateOccupancyCallback(const ros::TimerEvent& /*event*/) {

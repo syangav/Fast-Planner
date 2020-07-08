@@ -9,33 +9,63 @@
   <arg name="c_num"/>
   <arg name="p_num"/>
   <arg name="odometry_topic"/>
+  <arg name="random_map"/>
 
-  <node pkg ="map_generator" name ="random_forest" type ="random_forest" output = "screen">    
-    <remap from="~odometry"   to="$(arg odometry_topic)"/>    
-    <param name="init_state_x"   value="$(arg init_x)"/>
-    <param name="init_state_y"   value="$(arg init_y)"/>
-    <param name="map/x_size"     value="$(arg map_size_x_)" />
-    <param name="map/y_size"     value="$(arg map_size_y_)" />
-    <param name="map/z_size"     value="$(arg map_size_z_)" />
-    <param name="map/resolution" value="0.1"/>        
+  <group if="$(arg random_map)">
+      <node pkg ="map_generator" name ="random_forest" type ="random_forest" output = "screen">    
+      <remap from="~odometry"   to="$(arg odometry_topic)"/>    
+      <param name="init_state_x"   value="$(arg init_x)"/>
+      <param name="init_state_y"   value="$(arg init_y)"/>
+      <param name="map/x_size"     value="$(arg map_size_x_)" />
+      <param name="map/y_size"     value="$(arg map_size_y_)" />
+      <param name="map/z_size"     value="$(arg map_size_z_)" />
+      <param name="map/resolution" value="0.1"/>        
 
-    <param name="ObstacleShape/seed" value="-1"/>
-    <param name="map/obs_num"    value="$(arg p_num)"/>
-    <param name="ObstacleShape/lower_rad" value="0.5"/>
-    <param name="ObstacleShape/upper_rad" value="0.7"/>
-    <param name="ObstacleShape/lower_hei" value="0.0"/>
-    <param name="ObstacleShape/upper_hei" value="3.0"/>        
+      <param name="ObstacleShape/seed" value="-1"/>
+      <param name="map/obs_num"    value="$(arg p_num)"/>
+      <param name="ObstacleShape/lower_rad" value="0.5"/>
+      <param name="ObstacleShape/upper_rad" value="0.7"/>
+      <param name="ObstacleShape/lower_hei" value="0.0"/>
+      <param name="ObstacleShape/upper_hei" value="3.0"/>        
 
-    <param name="map/circle_num" value="$(arg c_num)"/>        
-    <param name="ObstacleShape/radius_l" value="0.7"/>        
-    <param name="ObstacleShape/radius_h" value="0.5"/>        
-    <param name="ObstacleShape/z_l" value="0.7"/>        
-    <param name="ObstacleShape/z_h" value="0.8"/>        
-    <param name="ObstacleShape/theta" value="0.5"/>        
+      <param name="map/circle_num" value="$(arg c_num)"/>        
+      <param name="ObstacleShape/radius_l" value="0.7"/>        
+      <param name="ObstacleShape/radius_h" value="0.5"/>        
+      <param name="ObstacleShape/z_l" value="0.7"/>        
+      <param name="ObstacleShape/z_h" value="0.8"/>        
+      <param name="ObstacleShape/theta" value="0.5"/>        
 
-    <param name="sensing/radius" value="5.0"/>        
-    <param name="sensing/rate"   value="10.0"/>        
-  </node>
+      <param name="sensing/radius" value="5.0"/>        
+      <param name="sensing/rate"   value="10.0"/>        
+      </node>
+  </group>
+
+  <group unless="$(arg random_map)">
+      <node pkg="octomap_server" type="octomap_tracking_server_node" name="octomap_talker" output="screen" args="$(find plan_manage)/worlds/map3.bt">
+
+      <param name="resolution" value="0.25" />
+      <param name="frame_id" type="string" value="world" />
+      <param name="sensor_model/max_range" value="4.0" />
+      <param name="save_directory" value="$(optenv OCTOMAP_SAVE_DIR ./)" />
+      <param name="track_changes" value="true"/>
+      <param name="listen_changes" value="false"/>
+
+      <param name="height_map" value="false" />
+
+      <param name="color/r" value="0.4" />
+      <param name="color/g" value="0.4" />
+      <param name="color/b" value="0.4" />
+      <param name="color/a" value="0.3" />
+
+      <param name="occupancy_max_z" value="" />
+      <param name="occupancy_min_z" value="0.2" />
+      <param name="filter_ground" value="true" />
+      <param name="base_frame_id" value="/world" />
+
+      <param name="min_change_pub" value="0" />
+      <remap from="/octomap_point_cloud_centers" to="/map_generator/global_cloud"/>
+	</node>
+  </group>
 
   <node pkg="so3_quadrotor_simulator" type="quadrotor_simulator_so3" name="quadrotor_simulator_so3" output="screen">
         <param name="rate/odom" value="200.0"/>
