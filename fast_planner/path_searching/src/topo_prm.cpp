@@ -54,6 +54,11 @@ void TopologyPRM::findTopoPaths(Eigen::Vector3d start, Eigen::Vector3d end,
   t1 = ros::Time::now();
 
   raw_paths = searchPaths();
+  std::cout << "raw path z info" << std::endl;
+  for(int i=0;i<raw_paths.size();i++){
+    vector<Eigen::Vector3d> temp = raw_paths[i];
+    std::cout << temp[1] << std::endl;
+  }
 
   search_time = (ros::Time::now() - t1).toSec();
 
@@ -62,14 +67,22 @@ void TopologyPRM::findTopoPaths(Eigen::Vector3d start, Eigen::Vector3d end,
   t1 = ros::Time::now();
 
   shortcutPaths();
-
+  std::cout << "shortcut path z info" << std::endl;
+  for(int i=0;i<short_paths_.size();i++){
+    vector<Eigen::Vector3d> temp = short_paths_[i];
+    std::cout << temp[1] << std::endl;
+  }
   short_time = (ros::Time::now() - t1).toSec();
 
   /* ---------- prune equivalent paths ---------- */
   t1 = ros::Time::now();
 
   filtered_paths = pruneEquivalent(short_paths_);
-
+  std::cout << "filtered path z info" << std::endl;
+  for(int i=0;i<filtered_paths.size();i++){
+    vector<Eigen::Vector3d> temp = filtered_paths[i];
+    std::cout << temp[1] << std::endl;
+  }
   prune_time = (ros::Time::now() - t1).toSec();
   // cout << "prune: " << (t2 - t1).toSec() << endl;
 
@@ -77,7 +90,11 @@ void TopologyPRM::findTopoPaths(Eigen::Vector3d start, Eigen::Vector3d end,
   t1 = ros::Time::now();
 
   select_paths = selectShortPaths(filtered_paths, 1);
-
+  std::cout << "select path z info" << std::endl;
+  for(int i=0;i<select_paths.size();i++){
+    vector<Eigen::Vector3d> temp = select_paths[i];
+    std::cout << temp[1] << std::endl;
+  }
   select_time = (ros::Time::now() - t1).toSec();
 
   final_paths_ = select_paths;
@@ -237,7 +254,7 @@ Eigen::Vector3d TopologyPRM::getSample() {
   pt(2) = rand_pos_(eng_) * sample_r_(2);
 
   pt = rotation_ * pt + translation_;
-
+  pt(2)=0.2;
   return pt;
 }
 

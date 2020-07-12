@@ -181,13 +181,40 @@ void rcvGlobalPointCloudCallBack(const sensor_msgs::PointCloud2 & pointcloud_map
   pcl::PointXYZ pt_in;
   //transform map to point cloud format
   pcl::fromROSMsg(pointcloud_map, cloudIn);
+  float x_min = 100.0f;
+  float x_max = 0.0f;
+  float y_min = 100.0f;
+  float y_max = 0.0f;
+  float z_min = 100.0f;
+  float z_max = 0.0f;
   for(int i = 0; i < int(cloudIn.points.size()); i++){
     pt_in = cloudIn.points[i];
     cloud_data.push_back(pt_in.x);
     cloud_data.push_back(pt_in.y);
     cloud_data.push_back(pt_in.z);
+    if (pt_in.x < x_min){
+      x_min = pt_in.x;
+    }
+    if (pt_in.x > x_max){
+      x_max = pt_in.x;
+    }
+    if (pt_in.y < y_min){
+      y_min = pt_in.y;
+    }
+    if (pt_in.y > y_max){
+      y_max = pt_in.y;
+    }
+    if (pt_in.z < z_min){
+      z_min = pt_in.z;
+    }
+    if (pt_in.z > z_max){
+      z_max = pt_in.z;
+    }
   }
   printf("global map has points: %d.\n", (int)cloud_data.size() / 3 );
+  printf("min x: %f, max x: %f \n",x_min,x_max);
+  printf("min y: %f, max y: %f \n",z_min,y_max);
+  printf("min z: %f, max z: %f \n",z_min,z_max);
   //pass cloud_data to depth render
   depthrender.set_data(cloud_data);
   depth_hostptr = (int*) malloc(width * height * sizeof(int));

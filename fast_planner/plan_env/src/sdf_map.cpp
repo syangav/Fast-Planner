@@ -53,7 +53,7 @@ void SDFMap::initMap(ros::NodeHandle& nh) {
 
   mp_.local_bound_inflate_ = max(mp_.resolution_, mp_.local_bound_inflate_);
   mp_.resolution_inv_ = 1 / mp_.resolution_;
-  mp_.map_origin_ = Eigen::Vector3d(-x_size / 2.0, -y_size / 2.0, mp_.ground_height_);
+  mp_.map_origin_ = Eigen::Vector3d(0.0, 0.0, mp_.ground_height_);
   mp_.map_size_ = Eigen::Vector3d(x_size, y_size, z_size);
 
   mp_.prob_hit_log_ = logit(mp_.p_hit_);
